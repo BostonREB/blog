@@ -44,6 +44,7 @@ def login_post():
     email = request.form["email"]
     password = request.form["password"]
     user = session.query(User).filter_by(email=email).first()
+    user.user_logged_in = True
     if not user or not check_password_hash(user.password, password):
         flash("Incorrect username or password", "danger")
         return redirect(url_for("login_get"))
@@ -54,6 +55,8 @@ def login_post():
 @app.route("/logout", methods=["GET"])
 @login_required
 def logout():
+    user = current_user
+    user.user_logged_in = False
     logout_user()
     return redirect(url_for("posts"))
 
